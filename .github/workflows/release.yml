@@ -43,8 +43,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+          tagName: ${{ github.ref_name }}
           releaseName: "Converter v__VERSION__"
-          tagName: app-v__VERSION__
           releaseBody: "See the assets to download and install this version."
           releaseDraft: true
           prerelease: false
