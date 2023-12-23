@@ -77,8 +77,10 @@ function App() {
             onChange={(e) => setResolution(e.target.value)}
           >
             <option value="Same">Manter</option>
-            <option value="Mobile">360p</option>
+            <option value="Sd">480p</option>
+            <option value="Hsd">600</option>
             <option value="Hd">720p</option>
+            <option value="Hdd">900p</option>
           </select>
         </div>
         {!isConverting && (

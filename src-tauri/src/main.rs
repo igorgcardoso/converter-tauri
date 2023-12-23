@@ -21,8 +21,10 @@ fn convert_file(path: String, resolution: Resolution) -> Result<String, String> 
     let cmd = binding.arg("-i").arg(&path);
 
     let cmd = match resolution {
-        Resolution::Mobile => cmd.arg("-vf").arg("scale=-1:360"),
+        Resolution::Sd => cmd.arg("-vf").arg("scale=-1:480"),
+        Resolution::Hsd => cmd.arg("-vf").arg("scale=-1:600"),
         Resolution::Hd => cmd.arg("-vf").arg("scale=-1:720"),
+        Resolution::Hdd => cmd.arg("-vf").arg("scale=-1:900"),
         Resolution::Same => cmd,
     };
 
@@ -40,7 +42,9 @@ fn convert_file(path: String, resolution: Resolution) -> Result<String, String> 
 
 #[derive(serde::Deserialize)]
 enum Resolution {
-    Mobile,
+    Sd,
+    Hsd,
     Hd,
+    Hdd,
     Same,
 }
