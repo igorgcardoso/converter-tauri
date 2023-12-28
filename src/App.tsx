@@ -1,16 +1,24 @@
 import { invoke } from '@tauri-apps/api';
 import { open } from '@tauri-apps/api/dialog';
+import { Event, listen } from '@tauri-apps/api/event';
 import clsx from 'clsx';
 import { useState } from 'react';
+
+type EventPayload = {
+  eta: string;
+};
 
 function App() {
   const [selectedFile, setSelectedFile] = useState('');
   const [resolution, setResolution] = useState('');
   const [isConverting, setIsConverting] = useState(false);
   const [done, setDone] = useState(false);
+  const [eta, setEta] = useState('');
+  const [error, setError] = useState('');
 
   async function openFile() {
     setDone(false);
+    setError('');
     const result = await open({
       multiple: false,
       filters: [
@@ -35,12 +43,18 @@ function App() {
           resolution: resolution || 'Same',
         });
         setDone(true);
-        setSelectedFile('');
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (e: any) {
+        setError(e);
       } finally {
         setIsConverting(false);
       }
     }
   }
+
+  listen('convert_progress', (event: Event<EventPayload>) => {
+    setEta(event.payload.eta);
+  });
 
   return (
     <div className="w-screen h-screen bg-slate-900">
@@ -78,19 +92,22 @@ function App() {
           >
             <option value="Same">Manter</option>
             <option value="Sd">480p</option>
-            <option value="Hsd">600</option>
+            <option value="Hsd">600p</option>
             <option value="Hd">720p</option>
             <option value="Hdd">900p</option>
           </select>
         </div>
-        {!isConverting && (
+        {!isConverting ? (
           <button
             className="px-4 py-2 mt-4 text-white bg-green-500 rounded-md hover:bg-green-600"
             onClick={convertFile}
           >
             Converter
           </button>
+        ) : (
+          <span className="mt-4 text-white">ETA: {eta || 'Calculando...'}</span>
         )}
+        {error && <span className="mt-4 text-red-500">error</span>}
       </div>
     </div>
   );
